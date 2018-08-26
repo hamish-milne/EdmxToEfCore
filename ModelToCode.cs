@@ -18,7 +18,7 @@ namespace EdmxToEfCore
 			bool? lazyLoading = null;
 			foreach (var container in schema.EntityContainers)
 			{
-				lazyLoading = container.IsLazyLoadingEnabled();
+				lazyLoading = container.LazyLoadingEnabled;
 				container.WriteClass(schema, codeWriter);
 				codeWriter.NewLine();
 			}
@@ -56,9 +56,14 @@ namespace EdmxToEfCore
 		public static void WriteClass(this EntityType type, bool lazyLoad, Csdl.Schema schema, CSharpCodeWriter writer)
 		{
 			type.WriteDocumentation(writer);
+			var classMods = Modifiers.Partial;
+			if (type.Abstract)
+			{
+				classMods |= Modifiers.AbstractClass;
+			}
 			writer.Class(type.Name,
 				type.BaseType == null ? null : new []{schema.FindTypeByName(type.BaseType).Name},
-				Modifiers.Partial);
+				classMods, type.TypeAccess);
 			if (type.Properties != null)
 			foreach (var prop in type.Properties)
 			{
@@ -73,7 +78,8 @@ namespace EdmxToEfCore
 				} else if (!valueType && !prop.Nullable) {
 					writer.Attribute("Required");
 				}
-				writer.AutoProperty(prop.Name, propType, null);
+				writer.AutoProperty(prop.Name, propType, null, Definition.Sealed,
+					prop.GetterAccess, prop.SetterAccess);
 				writer.NewLine();
 			}
 			if (type.NavigationProperties != null)
@@ -102,11 +108,13 @@ namespace EdmxToEfCore
 						writer.Attribute("Required");
 						goto case Multiplicity.ZeroOrOne;
 					case Multiplicity.ZeroOrOne:
-						writer.AutoProperty(navProp.Name, schema.FindTypeByName(toEnd.Type).Name, null, isVirtual);
+						writer.AutoProperty(navProp.Name, schema.FindTypeByName(toEnd.Type).Name, null, isVirtual,
+							navProp.GetterAccess, navProp.SetterAccess);
 						break;
 					case Multiplicity.Many:
 						// TODO: Support HashSet, Array etc. here
-						writer.AutoProperty(navProp.Name, $"List<{schema.FindTypeByName(toEnd.Type).Name}>", null, isVirtual);
+						writer.AutoProperty(navProp.Name, $"List<{schema.FindTypeByName(toEnd.Type).Name}>", null, isVirtual,
+							navProp.GetterAccess, navProp.SetterAccess);
 						break;
 				}
 				writer.NewLine();

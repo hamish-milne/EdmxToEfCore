@@ -11,8 +11,6 @@ At the moment the tool works well for conventional models. If you're doing somet
 
 ## TODO
 
-* Abstract and Internal modifiers
-* Designer annotations for visibility modifiers
 * Support derived types not in an EntitySet
 * Support many-to-many relationships (without an explicit join entity)
 * Complex types

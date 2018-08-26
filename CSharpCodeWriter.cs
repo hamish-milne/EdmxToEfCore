@@ -3,13 +3,6 @@ namespace EdmxToEfCore
 	using System;
 	using System.IO;
 
-	public enum Visibility
-	{
-		Public,
-		Protected,
-		Private
-	}
-
 	public enum Definition
 	{
 		Sealed,
@@ -23,6 +16,7 @@ namespace EdmxToEfCore
 	{
 		None = 0,
 		Partial = (1 << 0),
+		AbstractClass = (1 << 1),
 	}
 
 	public class CSharpCodeWriter : IDisposable
@@ -122,6 +116,10 @@ namespace EdmxToEfCore
 			{
 				Stream.Write("partial ");
 			}
+			if ((modifiers & Modifiers.AbstractClass) != 0)
+			{
+				Stream.Write("abstract ");
+			}
 		}
 
 		public void WriteVisibility(Visibility visibility)
@@ -130,6 +128,7 @@ namespace EdmxToEfCore
 			{
 				case Visibility.Private: Stream.Write("private "); break;
 				case Visibility.Protected: Stream.Write("protected "); break;
+				case Visibility.Internal: Stream.Write("internal "); break;
 				case Visibility.Public: Stream.Write("public "); break;
 				default: throw new ArgumentOutOfRangeException();
 			}
@@ -171,12 +170,12 @@ namespace EdmxToEfCore
 			Action<CSharpCodeWriter> getBody,
 			Action<CSharpCodeWriter> setBody,
 			Definition definition = Definition.Sealed,
-			Visibility visibility = Visibility.Public,
-			Visibility? getVisibility = null,
-			Visibility? setVisibility = null)
+			Visibility getVisibility = Visibility.Public,
+			Visibility setVisibility = Visibility.Public)
 		{
 			WriteIndents();
-			WriteVisibility(visibility);
+			var propVisibility = (Visibility)Math.Min((int)getVisibility, (int)setVisibility);
+			WriteVisibility(propVisibility);
 			WriteDefinition(definition);
 			Stream.Write(type);
 			Stream.Write(' ');
@@ -184,14 +183,14 @@ namespace EdmxToEfCore
 
 			BlockBegin();
 			WriteIndents();
-			if (getVisibility.HasValue)
-				WriteVisibility(getVisibility.Value);
+			if (getVisibility > propVisibility)
+				WriteVisibility(getVisibility);
 			Stream.Write("get");
 			getBody(this);
 			NewLine();
 			WriteIndents();
-			if (setVisibility.HasValue)
-				WriteVisibility(setVisibility.Value);
+			if (setVisibility > propVisibility)
+				WriteVisibility(setVisibility);
 			Stream.Write("set");
 			setBody(this);
 			BlockEnd();
@@ -200,23 +199,23 @@ namespace EdmxToEfCore
 		public void AutoProperty(string name, string type,
 			Action<CSharpCodeWriter> initializer,
 			Definition definition = Definition.Sealed,
-			Visibility visibility = Visibility.Public,
-			Visibility? getVisibility = null,
-			Visibility? setVisibility = null)
+			Visibility getVisibility = Visibility.Public,
+			Visibility setVisibility = Visibility.Public)
 		{
 			WriteIndents();
-			WriteVisibility(visibility);
+			var propVisibility = (Visibility)Math.Min((int)getVisibility, (int)setVisibility);
+			WriteVisibility(propVisibility);
 			WriteDefinition(definition);
 			Stream.Write(type);
 			Stream.Write(' ');
 			Stream.Write(name);
 
-			Stream.Write(" {");
-			if (getVisibility.HasValue)
-				WriteVisibility(getVisibility.Value);
-			Stream.Write(" get; ");
-			if (setVisibility.HasValue)
-				WriteVisibility(setVisibility.Value);
+			Stream.Write(" { ");
+			if (getVisibility > propVisibility)
+				WriteVisibility(getVisibility);
+			Stream.Write("get; ");
+			if (setVisibility > propVisibility)
+				WriteVisibility(setVisibility);
 			Stream.Write("set; }");
 			if (initializer != null)
 			{

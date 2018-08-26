@@ -24,13 +24,6 @@ namespace EdmxToEfCore
 
 	public static class ModelTraversal
 	{
-		public static bool IsLazyLoadingEnabled(this EntityContainer container)
-		{
-			var attr = container.AnnotationAttributes
-				.SingleOrDefault(a => a.NamespaceURI == Xmlns.Annotation && a.LocalName == "LazyLoadingEnabled");
-			return attr == null ? false : bool.Parse(attr.Value);
-		}
-
 		public static EntityType FindTypeByName(this Csdl.Schema schema, string qualifiedName)
 		{
 			var namespacePrefix = schema.Namespace + '.';

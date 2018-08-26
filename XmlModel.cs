@@ -202,11 +202,30 @@ namespace EdmxToEfCore
 		[XmlAttribute] public string SRID { get; set; }
 	}
 
+	public enum Visibility
+	{
+		Public,
+		Internal,
+		Protected,
+		Private
+	}
+
 	public class Property : TypeBase
 	{
-		[XmlAttribute] public string Name { get; set; }
-		[XmlAttribute] public StoreGeneratedPattern StoreGeneratedPattern { get; set; }
-		[XmlAttribute] public ConcurrencyMode ConcurrencyMode { get; set; }
+		[XmlAttribute]
+		public string Name { get; set; }
+
+		[XmlAttribute(Namespace = Xmlns.Annotation)]
+		public StoreGeneratedPattern StoreGeneratedPattern { get; set; }
+
+		[XmlAttribute]
+		public ConcurrencyMode ConcurrencyMode { get; set; }
+
+		[XmlAttribute(Namespace = Xmlns.Cg)]
+		public Visibility GetterAccess { get; set; }
+
+		[XmlAttribute(Namespace = Xmlns.Cg)]
+		public Visibility SetterAccess { get; set; }
 	}
 
 	public class TypeRef : TypeBase
@@ -220,6 +239,12 @@ namespace EdmxToEfCore
 		[XmlAttribute] public string Relationship { get; set; }
 		[XmlAttribute] public string ToRole { get; set; }
 		[XmlAttribute] public string FromRole { get; set; }
+
+		[XmlAttribute(Namespace = Xmlns.Cg)]
+		public Visibility GetterAccess { get; set; }
+
+		[XmlAttribute(Namespace = Xmlns.Cg)]
+		public Visibility SetterAccess { get; set; }
 	}
 
 	public class EntityType : HasDocumentation
@@ -232,6 +257,9 @@ namespace EdmxToEfCore
 		public Key Key { get; set; }
 		[XmlElement("Property")] public Property[] Properties { get; set; }
 		[XmlElement("NavigationProperty")] public NavigationProperty[] NavigationProperties { get; set; }
+
+		[XmlAttribute(Namespace = Xmlns.Cg)]
+		public Visibility TypeAccess { get; set; }
 	}
 
 	public class Member : HasAnnotationAttributes
@@ -325,6 +353,9 @@ namespace EdmxToEfCore
 		[XmlElement("EntitySet")] public EntitySet[] EntitySets { get; set; }
 		[XmlElement("AssociationSet")] public AssociationSet[] AssociationSets { get; set; }
 		[XmlElement("FunctionImport")] public FunctionImport[] FunctionImports { get; set; }
+
+		[XmlAttribute(Namespace = Xmlns.Annotation)]
+		public bool LazyLoadingEnabled { get; set; }
 	}
 
 	public class EntitySet : HasDocumentation
