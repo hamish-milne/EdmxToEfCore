@@ -7,14 +7,18 @@ My motivation for this tool was to use an EDMX model with an SQLite backend, som
 
 Run the program, give it an EDMX and an output file, and it'll generate the code.
 
-At the moment the tool works well for conventional models. If you're doing something weird it probably won't work. Or hell, it might not work anyway. Raise an issue or just fix it yourself and file a PR; the code's pretty straightforward.
+At the moment the tool works well for conventional models. If you're doing something weird it probably won't work. Or hell, it might not work anyway. Raise an issue, or just fix it yourself and file a PR: the code's pretty straightforward.
 
 ## TODO
 
 * Abstract and Internal modifiers
+* Designer annotations for visibility modifiers
 * Add Documentation to generated classes
 * Support derived types not in an EntitySet
-* Support many-to-many relationships
+* Support many-to-many relationships (without an explicit join entity)
 * Complex types
 * Collection types outside of navigation properties
-* One file per class
+* One file per class mode
+* Automatic determining of Primary/Dependent one-to-one relationships with no foreign key specified
+* Generate an OnConfigureModel stub with forwarding to user-defined method
+* Use nameof in attributes where possible

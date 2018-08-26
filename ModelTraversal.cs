@@ -24,8 +24,6 @@ namespace EdmxToEfCore
 
 	public static class ModelTraversal
 	{
-
-
 		public static bool IsLazyLoadingEnabled(this EntityContainer container)
 		{
 			var attr = container.AnnotationAttributes
@@ -100,6 +98,12 @@ namespace EdmxToEfCore
 			var fromRole = assoc.Ends.Single(e => e != otherEnd).Role;
 			var otherProperty = otherType.NavigationProperties.SingleOrDefault(p => p.FromRole == toRole && p.ToRole == fromRole);
 			return otherProperty?.Name;
+		}
+
+		public static bool IsKey(this Property property, EntityType parentType)
+		{
+			if (parentType.Key?.KeyProperties == null) { return false; }
+			return parentType.Key.KeyProperties.Any(p => p.Name == property.Name);
 		}
 
 	}

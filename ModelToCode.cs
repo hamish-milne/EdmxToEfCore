@@ -7,6 +7,14 @@ namespace EdmxToEfCore
 		public static void WriteSingleFile(this Csdl.Schema schema, CSharpCodeWriter codeWriter)
 		{
 			codeWriter.Namespace(schema.Namespace);
+
+			codeWriter.Using("System");
+			codeWriter.Using("System.Collections.Generic");
+			codeWriter.Using("System.ComponentModel.DataAnnotations");
+			codeWriter.Using("System.ComponentModel.DataAnnotations.Schema");
+			codeWriter.Using("Microsoft.EntityFrameworkCore");
+			codeWriter.NewLine();
+
 			bool? lazyLoading = null;
 			foreach (var container in schema.EntityContainers)
 			{
@@ -42,6 +50,10 @@ namespace EdmxToEfCore
 			if (type.Properties != null)
 			foreach (var prop in type.Properties)
 			{
+				if (prop.IsKey(type))
+				{
+					writer.Attribute("Key");
+				}
 				var propType = schema.TypeNameToCLRType(prop.Type, out var valueType);
 				if (valueType && prop.Nullable) {
 					propType += "?";
@@ -56,10 +68,13 @@ namespace EdmxToEfCore
 			{
 				Association association = schema.GetAssociationByName(navProp.Relationship);
 				AssociationEnd toEnd = association.GetEndForRole(navProp.ToRole);
-				string foreignKey = association.GetForeignKey(navProp.FromRole);
-				if (foreignKey != null)
+				if (toEnd.Multiplicity != Multiplicity.Many) // Not supported for the Many end to have a foreign key
 				{
-					writer.Attribute($"ForeignKey(\"{foreignKey}\")");
+					string foreignKey = association.GetForeignKey(navProp.FromRole);
+					if (foreignKey != null)
+					{
+						writer.Attribute($"ForeignKey(\"{foreignKey}\")");
+					}
 				}
 				string inverseOf = association.GetInverseProperty(schema, navProp.ToRole);
 				if (inverseOf != null)
