@@ -20,4 +20,3 @@ At the moment the tool works well for conventional models. If you're doing somet
 * One file per class mode
 * Automatic determining of Primary/Dependent one-to-one relationships with no foreign key specified
 * Generate an OnConfigureModel stub with forwarding to user-defined method
-* Use nameof in attributes where possible

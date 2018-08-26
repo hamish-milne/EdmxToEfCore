@@ -97,7 +97,7 @@ namespace EdmxToEfCore
 			var otherType = schema.FindTypeByName(otherEnd.Type);
 			var fromRole = assoc.Ends.Single(e => e != otherEnd).Role;
 			var otherProperty = otherType.NavigationProperties.SingleOrDefault(p => p.FromRole == toRole && p.ToRole == fromRole);
-			return otherProperty?.Name;
+			return otherProperty == null ? null : (otherType.Name + "." + otherProperty.Name);
 		}
 
 		public static bool IsKey(this Property property, EntityType parentType)

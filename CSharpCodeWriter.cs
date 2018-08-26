@@ -89,11 +89,20 @@ namespace EdmxToEfCore
 			BlockBegin();
 		}
 
-		public void Attribute(string content)
+		public string NameOf(string element) => $"nameof({element})";
+
+		public void Attribute(string content, params string[] args)
 		{
 			WriteIndents();
 			Stream.Write('[');
 			Stream.Write(content);
+			var argList = string.Join(", ", args);
+			if (!string.IsNullOrEmpty(argList))
+			{
+				Stream.Write('(');
+				Stream.Write(argList);
+				Stream.Write(')');
+			}
 			Stream.Write(']');
 			NewLine();
 		}

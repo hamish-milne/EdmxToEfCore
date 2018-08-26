@@ -87,13 +87,13 @@ namespace EdmxToEfCore
 					string foreignKey = association.GetForeignKey(navProp.FromRole);
 					if (foreignKey != null)
 					{
-						writer.Attribute($"ForeignKey(\"{foreignKey}\")");
+						writer.Attribute("ForeignKey", writer.NameOf(foreignKey));
 					}
 				}
 				string inverseOf = association.GetInverseProperty(schema, navProp.ToRole);
 				if (inverseOf != null)
 				{
-					writer.Attribute($"InverseProperty(\"{inverseOf}\")");
+					writer.Attribute("InverseProperty", writer.NameOf(inverseOf));
 				}
 				var isVirtual = lazyLoad ? Definition.Virtual : Definition.Sealed;
 				switch (toEnd.Multiplicity)
