@@ -188,7 +188,7 @@ namespace EdmxToEfCore
 		Fixed
 	}
 
-	public abstract class TypeBase : HasAnnotationAttributes
+	public abstract class TypeBase : HasDocumentation
 	{
 		[XmlAttribute] public string Type { get; set; }
 		[XmlAttribute] public bool Nullable { get; set; } = true;

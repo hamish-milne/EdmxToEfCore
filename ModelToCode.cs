@@ -30,12 +30,23 @@ namespace EdmxToEfCore
 			codeWriter.BlockEnd();
 		}
 
+		public static void WriteDocumentation(this HasDocumentation obj, CSharpCodeWriter writer)
+		{
+			if (obj.Documentation != null)
+			{
+				writer.WriteDocElement("summary", obj.Documentation.Summary);
+				writer.WriteDocElement("remarks", obj.Documentation.LongDescription);
+			}
+		}
+
 		public static void WriteClass(this EntityContainer container, Csdl.Schema schema, CSharpCodeWriter writer)
 		{
 			writer.Class(container.Name, new []{"DbContext"}, Modifiers.Partial);
 			foreach (var set in container.EntitySets)
 			{
+				set.WriteDocumentation(writer);
 				writer.AutoProperty(set.Name, $"DbSet<{schema.FindTypeByName(set.EntityType).Name}>", null);
+				writer.NewLine();
 			}
 			// TODO: OnModelCreating method
 			// TODO: Explicitly include derived types that aren't in an EntitySet
@@ -44,12 +55,14 @@ namespace EdmxToEfCore
 
 		public static void WriteClass(this EntityType type, bool lazyLoad, Csdl.Schema schema, CSharpCodeWriter writer)
 		{
+			type.WriteDocumentation(writer);
 			writer.Class(type.Name,
 				type.BaseType == null ? null : new []{schema.FindTypeByName(type.BaseType).Name},
 				Modifiers.Partial);
 			if (type.Properties != null)
 			foreach (var prop in type.Properties)
 			{
+				prop.WriteDocumentation(writer);
 				if (prop.IsKey(type))
 				{
 					writer.Attribute("Key");
@@ -66,6 +79,7 @@ namespace EdmxToEfCore
 			if (type.NavigationProperties != null)
 			foreach (var navProp in type.NavigationProperties)
 			{
+				navProp.WriteDocumentation(writer);
 				Association association = schema.GetAssociationByName(navProp.Relationship);
 				AssociationEnd toEnd = association.GetEndForRole(navProp.ToRole);
 				if (toEnd.Multiplicity != Multiplicity.Many) // Not supported for the Many end to have a foreign key

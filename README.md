@@ -13,7 +13,6 @@ At the moment the tool works well for conventional models. If you're doing somet
 
 * Abstract and Internal modifiers
 * Designer annotations for visibility modifiers
-* Add Documentation to generated classes
 * Support derived types not in an EntitySet
 * Support many-to-many relationships (without an explicit join entity)
 * Complex types

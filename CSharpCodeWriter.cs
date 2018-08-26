@@ -217,5 +217,16 @@ namespace EdmxToEfCore
 			}
 			NewLine();
 		}
+
+		public void WriteDocElement(string element, string text)
+		{
+			if (string.IsNullOrWhiteSpace(text)) { return; }
+			WriteIndents();
+			Stream.WriteLine($"/// <{element}>");
+			WriteIndents();
+			Stream.WriteLine($"/// {text}");
+			WriteIndents();
+			Stream.WriteLine($"/// </{element}>");
+		}
 	}
 }
