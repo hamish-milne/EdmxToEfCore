@@ -72,6 +72,14 @@ namespace EdmxToEfCore
 				{
 					writer.Attribute("Key");
 				}
+				if (prop.ConcurrencyMode == ConcurrencyMode.Fixed)
+				{
+					writer.Attribute("ConcurrencyCheck");
+				}
+				if (prop.MaxLength > 0)
+				{
+					writer.Attribute("MaxLength", prop.MaxLength.ToString());
+				}
 				var propType = schema.TypeNameToCLRType(prop.Type, out var valueType);
 				if (valueType && prop.Nullable) {
 					propType += "?";
