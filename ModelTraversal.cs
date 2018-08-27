@@ -33,11 +33,11 @@ namespace EdmxToEfCore
 
 		public static string TypeNameToCLRType(this Csdl.Schema schema, string typeName, out bool valueType)
 		{
-			object edmSimpleType;
-			if (Enum.TryParse(typeof(EdmSimpleType), typeName, out edmSimpleType))
+			EdmSimpleType edmSimpleType;
+			if (Enum.TryParse<EdmSimpleType>(typeName, out edmSimpleType))
 			{
 				valueType = true;
-				switch ((EdmSimpleType)edmSimpleType)
+				switch (edmSimpleType)
 				{
 					case EdmSimpleType.Binary: valueType = false; return "byte[]";
 					case EdmSimpleType.Boolean: return "bool";
