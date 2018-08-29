@@ -19,6 +19,12 @@ namespace EdmxToEfCore
 		AbstractClass = (1 << 1),
 	}
 
+	public enum MetaType
+	{
+		Class,
+		Struct
+	}
+
 	public class CSharpCodeWriter : IDisposable
 	{
 		public StreamWriter Stream { get; }
@@ -146,12 +152,18 @@ namespace EdmxToEfCore
 			}
 		}
 
-		public void Class(string name, string[] inherits, Modifiers modifiers = Modifiers.None, Visibility visibility = Visibility.Public)
+		public void Type(MetaType metaType, string name, string[] inherits, Modifiers modifiers = Modifiers.None, Visibility visibility = Visibility.Public)
 		{
 			WriteIndents();
 			WriteVisibility(visibility);
 			WriteModifiers(modifiers);
-			Stream.Write("class ");
+			switch (metaType)
+			{
+				case MetaType.Class: Stream.Write("class"); break;
+				case MetaType.Struct: Stream.Write("struct"); break;
+				default: throw new ArgumentOutOfRangeException();
+			}
+			Stream.Write(' ');
 			Stream.Write(name);
 			if (inherits != null && inherits.Length > 0)
 			{
@@ -235,6 +247,34 @@ namespace EdmxToEfCore
 			Stream.WriteLine($"/// {text}");
 			WriteIndents();
 			Stream.WriteLine($"/// </{element}>");
+		}
+
+		public void Enum(string name, (string name, int? value)[] members,
+			EnumUnderlyingType? type = null, Visibility visibility = Visibility.Public)
+		{
+			WriteIndents();
+			WriteVisibility(visibility);
+			Stream.Write(type);
+			if (type.HasValue)
+			{
+				Stream.Write(" : ");
+				Stream.Write(type);
+			}
+			BlockBegin();
+
+			foreach (var member in members)
+			{
+				WriteIndents();
+				Stream.Write(member.name);
+				if (member.value.HasValue)
+				{
+					Stream.Write(" = ");
+					Stream.Write(member.value);
+				}
+				Stream.Write(',');
+				NewLine();
+			}
+			BlockEnd();
 		}
 	}
 }

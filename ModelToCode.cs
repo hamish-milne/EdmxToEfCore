@@ -1,6 +1,7 @@
 namespace EdmxToEfCore
 {
 	using System.IO;
+	using System.Linq;
 
 	public static class ModelToCode
 	{
@@ -14,6 +15,26 @@ namespace EdmxToEfCore
 			codeWriter.Using("System.ComponentModel.DataAnnotations.Schema");
 			codeWriter.Using("Microsoft.EntityFrameworkCore");
 			codeWriter.NewLine();
+
+			foreach (var type in schema.EnumTypes)
+			{
+				codeWriter.Enum(type.Name,
+					type.Members.Select(m => (m.Name, m.Value)).ToArray(),
+					type.UnderlyingType);
+			}
+
+			foreach (var type in schema.ComplexTypes)
+			{
+				// TODO: Config for class or struct
+				codeWriter.Type(MetaType.Class, type.Name, null, Modifiers.Partial);
+				foreach (var prop in type.Properties)
+				{
+					prop.WriteOut(null, schema, codeWriter);
+					codeWriter.NewLine();
+				}
+				codeWriter.BlockEnd();
+				codeWriter.NewLine();
+			}
 
 			bool? lazyLoading = null;
 			foreach (var container in schema.EntityContainers)
@@ -41,7 +62,7 @@ namespace EdmxToEfCore
 
 		public static void WriteClass(this EntityContainer container, Csdl.Schema schema, CSharpCodeWriter writer)
 		{
-			writer.Class(container.Name, new []{"DbContext"}, Modifiers.Partial);
+			writer.Type(MetaType.Class, container.Name, new []{"DbContext"}, Modifiers.Partial);
 			foreach (var set in container.EntitySets)
 			{
 				set.WriteDocumentation(writer);
@@ -53,6 +74,31 @@ namespace EdmxToEfCore
 			writer.BlockEnd();
 		}
 
+		public static void WriteOut(this Property prop, EntityType parent, Csdl.Schema schema, CSharpCodeWriter writer)
+		{
+			prop.WriteDocumentation(writer);
+			if (parent != null && prop.IsKey(parent))
+			{
+				writer.Attribute("Key");
+			}
+			if (prop.ConcurrencyMode == ConcurrencyMode.Fixed)
+			{
+				writer.Attribute("ConcurrencyCheck");
+			}
+			if (prop.MaxLength > 0)
+			{
+				writer.Attribute("MaxLength", prop.MaxLength.ToString());
+			}
+			var propType = schema.TypeNameToCLRType(prop.Type, out var valueType);
+			if (valueType && prop.Nullable) {
+				propType += "?";
+			} else if (!valueType && !prop.Nullable) {
+				writer.Attribute("Required");
+			}
+			writer.AutoProperty(prop.Name, propType, null, Definition.Sealed,
+				prop.GetterAccess, prop.SetterAccess);
+		}
+
 		public static void WriteClass(this EntityType type, bool lazyLoad, Csdl.Schema schema, CSharpCodeWriter writer)
 		{
 			type.WriteDocumentation(writer);
@@ -61,33 +107,13 @@ namespace EdmxToEfCore
 			{
 				classMods |= Modifiers.AbstractClass;
 			}
-			writer.Class(type.Name,
+			writer.Type(MetaType.Class, type.Name,
 				type.BaseType == null ? null : new []{schema.FindTypeByName(type.BaseType).Name},
 				classMods, type.TypeAccess);
 			if (type.Properties != null)
 			foreach (var prop in type.Properties)
 			{
-				prop.WriteDocumentation(writer);
-				if (prop.IsKey(type))
-				{
-					writer.Attribute("Key");
-				}
-				if (prop.ConcurrencyMode == ConcurrencyMode.Fixed)
-				{
-					writer.Attribute("ConcurrencyCheck");
-				}
-				if (prop.MaxLength > 0)
-				{
-					writer.Attribute("MaxLength", prop.MaxLength.ToString());
-				}
-				var propType = schema.TypeNameToCLRType(prop.Type, out var valueType);
-				if (valueType && prop.Nullable) {
-					propType += "?";
-				} else if (!valueType && !prop.Nullable) {
-					writer.Attribute("Required");
-				}
-				writer.AutoProperty(prop.Name, propType, null, Definition.Sealed,
-					prop.GetterAccess, prop.SetterAccess);
+				prop.WriteOut(type, schema, writer);
 				writer.NewLine();
 			}
 			if (type.NavigationProperties != null)

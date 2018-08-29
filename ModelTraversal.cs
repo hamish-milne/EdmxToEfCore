@@ -24,11 +24,13 @@ namespace EdmxToEfCore
 
 	public static class ModelTraversal
 	{
-		public static EntityType FindTypeByName(this Csdl.Schema schema, string qualifiedName)
+		public static NamedElement FindTypeByName(this Csdl.Schema schema, string qualifiedName)
 		{
 			var namespacePrefix = schema.Namespace + '.';
 			var localName = qualifiedName.Substring(namespacePrefix.Length);
-			return schema.EntityTypes.SingleOrDefault(t => t.Name == localName);
+			return (NamedElement)schema.EntityTypes.SingleOrDefault(t => t.Name == localName)
+				?? (NamedElement)schema.ComplexTypes.SingleOrDefault(t => t.Name == localName)
+				?? (NamedElement)schema.EnumTypes.SingleOrDefault(t => t.Name == localName);
 		}
 
 		public static string TypeNameToCLRType(this Csdl.Schema schema, string typeName, out bool valueType)
@@ -59,8 +61,9 @@ namespace EdmxToEfCore
 			}
 			else
 			{
-				valueType = false;
-				return schema.FindTypeByName(typeName).Name;
+				var otherType = schema.FindTypeByName(typeName);
+				valueType = !(otherType is EntityType);
+				return otherType.Name;
 			}
 		}
 
@@ -87,7 +90,7 @@ namespace EdmxToEfCore
 		public static string GetInverseProperty(this Association assoc, Csdl.Schema schema, string toRole)
 		{
 			var otherEnd = assoc.Ends.Single(e => e.Role == toRole);
-			var otherType = schema.FindTypeByName(otherEnd.Type);
+			var otherType = (EntityType)schema.FindTypeByName(otherEnd.Type);
 			var fromRole = assoc.Ends.Single(e => e != otherEnd).Role;
 			var otherProperty = otherType.NavigationProperties.SingleOrDefault(p => p.FromRole == toRole && p.ToRole == fromRole);
 			return otherProperty == null ? null : (otherType.Name + "." + otherProperty.Name);

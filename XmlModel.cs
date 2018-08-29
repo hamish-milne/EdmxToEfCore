@@ -86,20 +86,21 @@ namespace EdmxToEfCore
 		public Documentation Documentation { get; set; }
 	}
 
-	public class Association : HasDocumentation
+	public class NamedElement : HasDocumentation
 	{
 		[XmlAttribute] public string Name { get; set; }
+	}
 
+	public class Association : NamedElement
+	{
 		[XmlElement("End")]
 		public AssociationEnd[] Ends { get; set; }
 
 		public ReferentialConstraint ReferentialConstraint { get; set; }
 	}
 
-	public class AssociationSet : HasDocumentation
+	public class AssociationSet : NamedElement
 	{
-		[XmlAttribute] public string Name { get; set; }
-
 		[XmlElement("End")]
 		public AssociationSetEnd[] Ends { get; set; }
 
@@ -149,9 +150,8 @@ namespace EdmxToEfCore
 	}
 
 	
-	public class PropertyRef : HasDocumentation
+	public class PropertyRef : NamedElement
 	{
-		[XmlAttribute] public string Name { get; set; }
 	}
 
 	public class ConstraintElement : HasAnnotations
@@ -233,9 +233,8 @@ namespace EdmxToEfCore
 
 	}
 
-	public class NavigationProperty : HasDocumentation
+	public class NavigationProperty : NamedElement
 	{
-		[XmlAttribute] public string Name { get; set; }
 		[XmlAttribute] public string Relationship { get; set; }
 		[XmlAttribute] public string ToRole { get; set; }
 		[XmlAttribute] public string FromRole { get; set; }
@@ -247,9 +246,8 @@ namespace EdmxToEfCore
 		public Visibility SetterAccess { get; set; }
 	}
 
-	public class EntityType : HasDocumentation
+	public class EntityType : NamedElement
 	{
-		[XmlAttribute] public string Name { get; set; }
 		[XmlAttribute] public string BaseType { get; set; }
 		[XmlAttribute] public bool Abstract { get; set; }
 		[XmlAttribute] public bool OpenType { get; set; }
@@ -283,9 +281,8 @@ namespace EdmxToEfCore
 		Int64
 	}
 
-	public class EnumType : HasDocumentation
+	public class EnumType : NamedElement
 	{
-		[XmlAttribute] public string Name { get; set; }
 		[XmlAttribute] public bool IsFlags { get; set; }
 		[XmlAttribute] public EnumUnderlyingType UnderlyingType { get; set; } = EnumUnderlyingType.Int32;
 		[XmlElement("Member")] public Member[] Members { get; set; }
@@ -300,7 +297,6 @@ namespace EdmxToEfCore
 
 	public class Parameter : HasAnnotations
 	{
-		
 		[XmlAttribute] public string Name { get; set; }
 		[XmlAttribute] public string Type { get; set; }
 		[XmlAttribute] public ParameterMode Mode { get; set; }
@@ -337,9 +333,8 @@ namespace EdmxToEfCore
 		public RowType RowType { get; set; }
 	}
 
-	public class ComplexType : HasDocumentation
+	public class ComplexType : NamedElement
 	{
-		[XmlAttribute] public string Name { get; set; }
 		[XmlAttribute] public string BaseType { get; set; }
 		[XmlAttribute] public bool Abstract { get; set; }
 
@@ -347,9 +342,8 @@ namespace EdmxToEfCore
 	}
 
 	
-	public class EntityContainer : HasAnnotations
+	public class EntityContainer : NamedElement
 	{
-		[XmlAttribute] public string Name { get; set; }
 		[XmlElement("EntitySet")] public EntitySet[] EntitySets { get; set; }
 		[XmlElement("AssociationSet")] public AssociationSet[] AssociationSets { get; set; }
 		[XmlElement("FunctionImport")] public FunctionImport[] FunctionImports { get; set; }
@@ -358,9 +352,8 @@ namespace EdmxToEfCore
 		public bool LazyLoadingEnabled { get; set; }
 	}
 
-	public class EntitySet : HasDocumentation
+	public class EntitySet : NamedElement
 	{
-		[XmlAttribute] public string Name { get; set; }
 		[XmlAttribute] public string EntityType { get; set; }
 		[XmlAttribute] public string Schema { get; set; }
 		[XmlAttribute] public string Table { get; set; }
@@ -374,9 +367,8 @@ namespace EdmxToEfCore
 		[XmlAttribute] public string EntitySet { get; set; }
 	}
 
-	public class FunctionImport : HasDocumentation
+	public class FunctionImport : NamedElement
 	{
-		[XmlAttribute] public string Name { get; set; }
 		[XmlAttribute] public string ReturnType { get; set; }
 		[XmlAttribute] public string EntitySet { get; set; }
 		[XmlAttribute] public bool IsComposable { get; set; }
@@ -393,9 +385,8 @@ namespace EdmxToEfCore
 
 	namespace Csdl
 	{
-		public class Function : HasDocumentation
+		public class Function : NamedElement
 		{
-			[XmlAttribute] public string Name { get; set; }
 			[XmlAttribute] public string ReturnType { get; set; }
 
 			[XmlElement("Parameter")] public Parameter[] Parameters { get; set; }
@@ -421,9 +412,8 @@ namespace EdmxToEfCore
 
 	namespace Ssdl
 	{
-		public class Function : HasDocumentation
+		public class Function : NamedElement
 		{
-			[XmlAttribute] public string Name { get; set; }
 			[XmlAttribute] public string ReturnType { get; set; }
 			[XmlAttribute] public bool Aggregate { get; set; }
 			[XmlAttribute] public bool BuiltIn { get; set; }

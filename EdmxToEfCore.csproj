@@ -3,21 +3,28 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
+    <PackageVersion>0.0.1</PackageVersion>
+    <PackageId>EdmxToEfCore</PackageId>
+    <Title>EDMX To EF Core</Title>
+    <Authors>hamish_milne</Authors>
+    <RepositoryUrl>https://github.com/hamish-milne/EdmxToEfCore</RepositoryUrl>
+    <PackageLicenseUrl>$(RepositoryUrl)/blob/master/LICENSE.TXT</PackageLicenseUrl>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+    <Description>Generates Entity Framework Core models from EDMX files in the project.</Description>
+    <Copyright>© Hamish Milne 2018</Copyright>
+    <PackageTags>entity framework core; edmx</PackageTags>
+    <MinClientVersion>2.5</MinClientVersion>
   </PropertyGroup>
 
   <ItemGroup Label="dotnet pack instructions">
-    <Content Include="build\*.targets">
-      <Pack>true</Pack>
-      <PackagePath>build\</PackagePath>
-    </Content>
-    <Content Include="$(OutputPath)\*.dll;$(OutputPath)\*.json">
+    <Content Include="$(OutputPath)\*.dll;$(OutputPath)\*.json;*.targets">
       <Pack>true</Pack>
       <PackagePath>build\</PackagePath>
     </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.8.166" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="15.8.166-*" />
   </ItemGroup>
 
 </Project>
