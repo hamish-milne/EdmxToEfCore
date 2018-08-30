@@ -24,27 +24,14 @@ namespace EdmxToEfCore
 			var inputs = new List<string>();
 			if (AutoIncludeFromProject)
 			{
-				inputs.AddRange(Directory.EnumerateFiles("", "*.edmx", SearchOption.AllDirectories));
+				inputs.AddRange(Directory.EnumerateFiles(".", "*.edmx", SearchOption.AllDirectories));
 			}
-			inputs.AddRange(InputModels.Select(o => o.GetMetadata("FullPath")));
+			if (InputModels != null)
+				inputs.AddRange(InputModels.Select(o => o.GetMetadata("FullPath")));
 
 			foreach (var inFile in inputs.Distinct())
 			{
-				var outFile = ToOutputPath(inFile);
-				Edmx edmx;
-				Log.LogMessage($"Loading EDMX model at {inFile}...");
-				using (var fs = File.Open(inFile, FileMode.Open))
-				{
-					edmx = (Edmx)(new XmlSerializer(typeof(Edmx))).Deserialize(fs);
-				}
-
-				Log.LogMessage($"Writing C# code to {outFile}...");
-				using (var codeWriter = new CSharpCodeWriter(outFile))
-				{
-					edmx.Runtime.ConceptualModels.Schema.WriteSingleFile(codeWriter);
-				}
-
-				Log.LogMessage("Success!");
+				ModelToCode.ProcessFile(inFile, ToOutputPath(inFile), m => Log.LogMessage(m));
 			}
 			
 			return false;

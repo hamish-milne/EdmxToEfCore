@@ -1,10 +1,30 @@
 namespace EdmxToEfCore
 {
+	using System;
 	using System.IO;
 	using System.Linq;
+	using System.Xml.Serialization;
 
 	public static class ModelToCode
 	{
+		public static void ProcessFile(string inFile, string outFile, Action<string> log)
+		{
+			Edmx edmx;
+			log($"Loading EDMX model at {inFile}...");
+			using (var fs = File.Open(inFile, FileMode.Open))
+			{
+				edmx = (Edmx)(new XmlSerializer(typeof(Edmx))).Deserialize(fs);
+			}
+
+			log($"Writing C# code to {outFile}...");
+			using (var codeWriter = new CSharpCodeWriter(outFile))
+			{
+				edmx.Runtime.ConceptualModels.Schema.WriteSingleFile(codeWriter);
+			}
+
+			log("Success!");
+		}
+
 		public static void WriteSingleFile(this Csdl.Schema schema, CSharpCodeWriter codeWriter)
 		{
 			codeWriter.Namespace(schema.Namespace);
@@ -16,6 +36,7 @@ namespace EdmxToEfCore
 			codeWriter.Using("Microsoft.EntityFrameworkCore");
 			codeWriter.NewLine();
 
+			if (schema.EnumTypes != null)
 			foreach (var type in schema.EnumTypes)
 			{
 				codeWriter.Enum(type.Name,
@@ -23,10 +44,12 @@ namespace EdmxToEfCore
 					type.UnderlyingType);
 			}
 
+			if (schema.ComplexTypes != null)
 			foreach (var type in schema.ComplexTypes)
 			{
 				// TODO: Config for class or struct
 				codeWriter.Type(MetaType.Class, type.Name, null, Modifiers.Partial);
+				if (type.Properties != null)
 				foreach (var prop in type.Properties)
 				{
 					prop.WriteOut(null, schema, codeWriter);
@@ -37,12 +60,15 @@ namespace EdmxToEfCore
 			}
 
 			bool? lazyLoading = null;
+			if (schema.EntityContainers != null)
 			foreach (var container in schema.EntityContainers)
 			{
 				lazyLoading = container.LazyLoadingEnabled;
 				container.WriteClass(schema, codeWriter);
 				codeWriter.NewLine();
 			}
+
+			if (schema.EntityTypes != null)
 			foreach (var type in schema.EntityTypes)
 			{
 				type.WriteClass(lazyLoading ?? false, schema, codeWriter);
@@ -63,6 +89,7 @@ namespace EdmxToEfCore
 		public static void WriteClass(this EntityContainer container, Csdl.Schema schema, CSharpCodeWriter writer)
 		{
 			writer.Type(MetaType.Class, container.Name, new []{"DbContext"}, Modifiers.Partial);
+			if (container.EntitySets != null)
 			foreach (var set in container.EntitySets)
 			{
 				set.WriteDocumentation(writer);
