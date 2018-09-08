@@ -16,7 +16,7 @@
     <MinClientVersion>2.5</MinClientVersion>
   </PropertyGroup>
 
-  <ItemGroup Label="dotnet pack instructions">
+  <ItemGroup>
     <Content Include="$(OutputPath)\*.dll;$(OutputPath)\*.json;*.targets">
       <Pack>true</Pack>
       <PackagePath>build\</PackagePath>

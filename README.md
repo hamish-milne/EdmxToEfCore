@@ -6,22 +6,6 @@ My motivation for this tool was to use an EDMX model with an SQLite backend, som
 
 ## Features
 
-Run the program, give it an EDMX and an output file, and it'll generate the code.
+Just add the package and it'll automatically convert all the files in the project.
 
 At the moment the tool works well for conventional models. If you're doing something weird it probably won't work. Or hell, it might not work anyway. Raise an issue, or just fix it yourself and file a PR: the code's pretty straightforward.
-
-## TODO
-
-* Make this a compile step
-* Additional configuration (collection type, complex metatype etc.)
-* Support derived types not in an EntitySet
-* Support many-to-many relationships (without an explicit join entity)
-* Add OnDelete (with fluent API)
-* Unicode property?
-* Warning for fixed length property
-* Figure out what to do with StoreGeneratedPattern
-* Default value support (property defaults? or fluent API?)
-* Support owned types?
-* One file per class mode
-* Automatic determining of Primary/Dependent one-to-one relationships with no foreign key specified
-* Generate an OnConfigureModel stub with forwarding to user-defined method?

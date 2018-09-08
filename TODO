@@ -1,0 +1,15 @@
+# TODO
+
+☐ MSBuild Task: define, test and document
+✔ Test if MSBuild does file globbing or not @done(18-09-08 08:26)
+✔ Support additional configuration (collection types, complex metatype etc.) @done(18-09-08 08:26)
+✔ Fix nameof constructs to always use the namespace @done(18-09-08 08:26)
+☐ Generate an OnCreateModel stub for the fluent API
+☐ Automatically create join entities for many-to-many relationships
+☐ Support OnDelete (using the fluent API)
+☐ Add warnings/logging support (e.g. for FixedLength properties)
+☐ Figure out what to do with StoreGeneratedPattern
+☐ Default value support (property defaults, or fluent API?)
+☐ Support owned types
+☐ One file per class mode
+☐ Automatic Primary/Dependent one-to-one relationships with no foreign key

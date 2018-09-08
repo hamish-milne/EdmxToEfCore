@@ -16,14 +16,14 @@
 $@"EDMX to EF Core code generator
 (C) Hamish Milne 2018
 Usage:
-        {exeName} [input .edmx model] [output .cs file]
+        {exeName} [input .edmx model] [output .cs file or format]
 "
 				);
 				return 1;
 			}
 			var inFile = args[0];
 			var outFile = args[1];
-			ModelToCode.ProcessFile(inFile, outFile, Console.WriteLine);
+			ModelToCode.ProcessFile(new ModelToCode.Configuration(), inFile, outFile, Console.WriteLine);
 			return 0;
 		}
 	}
