@@ -23,7 +23,9 @@ Usage:
 			}
 			var inFile = args[0];
 			var outFile = args[1];
-			ModelToCode.ProcessFile(new ModelToCode.Configuration(), inFile, outFile, Console.WriteLine);
+			ModelToCode.ProcessFile(
+				new ModelToCode.Configuration{OutputPathPattern = outFile},
+				inFile, Console.WriteLine, Console.WriteLine, p => { });
 			return 0;
 		}
 	}

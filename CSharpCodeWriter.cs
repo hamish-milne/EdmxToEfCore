@@ -17,6 +17,7 @@ namespace EdmxToEfCore
 		None = 0,
 		Partial = (1 << 0),
 		AbstractClass = (1 << 1),
+		Static = (1 << 2),
 	}
 
 	public enum MetaType
@@ -118,6 +119,10 @@ namespace EdmxToEfCore
 
 		public void WriteModifiers(Modifiers modifiers)
 		{
+			if ((modifiers & Modifiers.Static) != 0)
+			{
+				Stream.Write("static ");
+			}
 			if ((modifiers & Modifiers.Partial) != 0)
 			{
 				Stream.Write("partial ");
@@ -275,6 +280,46 @@ namespace EdmxToEfCore
 				NewLine();
 			}
 			BlockEnd();
+		}
+
+		public void Method(string name, string returnType, Definition definition, Modifiers modifiers,
+			Visibility visibility, params (string type, string name)[] parameters)
+		{
+			WriteIndents();
+			WriteVisibility(visibility);
+			WriteDefinition(definition);
+			WriteModifiers(modifiers);
+			Stream.Write(returnType ?? "void");
+			Stream.Write(' ');
+			Stream.Write(name);
+			Stream.Write(" (");
+			bool first = true;
+			foreach (var p in parameters)
+			{
+				if (!first) {
+					Stream.Write(", ");
+				}
+				first = false;
+				Stream.Write(p.type);
+				Stream.Write(" ");
+				Stream.Write(p.name);
+			}
+			Stream.Write(")");
+			if (definition == Definition.Abstract || (modifiers & Modifiers.Partial) != 0)
+			{
+				Stream.Write(";");
+				NewLine();
+			} else {
+				BlockBegin();
+			}
+		}
+
+		public void Statement(string content)
+		{
+			WriteIndents();
+			Stream.Write(content);
+			Stream.Write(";");
+			NewLine();
 		}
 	}
 }

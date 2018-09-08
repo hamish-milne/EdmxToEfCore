@@ -1,15 +1,19 @@
-# TODO
-
-☐ MSBuild Task: define, test and document
+☐ Publish this to nuget!
+✔ MSBuild Task: define, test and document @done(18-09-08 17:46)
+✔ Fix it so you don't have to compile twice (output properties?) @done(18-09-08 17:43)
+☐ Auto remove old/unused files according to pattern, esp for multi-file mode
+✔ Allow empty configuration properties @done(18-09-08 10:37)
 ✔ Test if MSBuild does file globbing or not @done(18-09-08 08:26)
 ✔ Support additional configuration (collection types, complex metatype etc.) @done(18-09-08 08:26)
 ✔ Fix nameof constructs to always use the namespace @done(18-09-08 08:26)
-☐ Generate an OnCreateModel stub for the fluent API
+✔ Generate an OnCreateModel stub for the fluent API @done(18-09-08 16:19)
 ☐ Automatically create join entities for many-to-many relationships
 ☐ Support OnDelete (using the fluent API)
 ☐ Add warnings/logging support (e.g. for FixedLength properties)
 ☐ Figure out what to do with StoreGeneratedPattern
 ☐ Default value support (property defaults, or fluent API?)
 ☐ Support owned types
-☐ One file per class mode
+✔ One file per class mode @done(18-09-08 10:37)
 ☐ Automatic Primary/Dependent one-to-one relationships with no foreign key
+☐ Investigate mapping to tables and function imports
+☐ Add optional _OnModelCreating partial to allow connection providing etc. without having to inherit the class
