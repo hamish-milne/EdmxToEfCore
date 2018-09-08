@@ -6,7 +6,7 @@
     <PackageVersion>0.0.1</PackageVersion>
     <PackageId>EdmxToEfCore</PackageId>
     <Title>EDMX To EF Core</Title>
-    <Authors>hamish_milne</Authors>
+    <Authors>hamish-milne</Authors>
     <RepositoryUrl>https://github.com/hamish-milne/EdmxToEfCore</RepositoryUrl>
     <PackageLicenseUrl>$(RepositoryUrl)/blob/master/LICENSE.TXT</PackageLicenseUrl>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>

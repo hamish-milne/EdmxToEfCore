@@ -1,4 +1,4 @@
-☐ Publish this to nuget!
+✔ Publish this to nuget! @done(18-09-08 20:14)
 ✔ MSBuild Task: define, test and document @done(18-09-08 17:46)
 ✔ Fix it so you don't have to compile twice (output properties?) @done(18-09-08 17:43)
 ☐ Auto remove old/unused files according to pattern, esp for multi-file mode
