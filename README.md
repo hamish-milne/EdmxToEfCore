@@ -1,6 +1,6 @@
 # EDMX to Entity Framework Core
 
-[![NuGet](https://www.nuget.org/packages/EdmxToEfCore/)](https://img.shields.io/nuget/v/EdmxToEfCore.svg)
+[![NuGet](https://img.shields.io/nuget/v/EdmxToEfCore.svg)](https://www.nuget.org/packages/EdmxToEfCore/)
 [![Build status](https://ci.appveyor.com/api/projects/status/d8h898lhghnedwmd?svg=true)](https://ci.appveyor.com/project/hamish-milne/edmxtoefcore)
 
 A utility for generating Entity Framework Core models from an existing EDMX diagram. The generated code is treated as a 'code-first' model by the framework. This allows the use of Visual Studio's excellent visual editor for entity models without needing DDL providers installed in Visual Studio and such, and of course to take advantage of EF Core, which Microsoft has made pretty clear is the successor to EF6.
