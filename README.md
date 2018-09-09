@@ -29,6 +29,14 @@ The package is formed as an MSBuild task that gets invoked before compilation. I
 </ItemGroup>
 ```
 
+Disabling the default behaviour is straightforward:
+
+```XML
+<ItemGroup>
+    <EdmxToEfCore Remove="*.edmx" />
+</ItemGroup>
+```
+
 There are several properties you can add to control the generation process:
 
 ```XML
