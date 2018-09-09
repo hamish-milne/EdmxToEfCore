@@ -96,9 +96,17 @@ namespace EdmxToEfCore
 			return otherProperty == null ? null : (otherType.Name + "." + otherProperty.Name);
 		}
 
-		public static bool IsKey(this Property property, EntityType parentType)
+		public static Property[] GetKeys(this EntityType type)
 		{
-			if (parentType.Key?.KeyProperties == null) { return false; }
+			if (type.Key?.KeyProperties == null) { return Array.Empty<Property>(); }
+			return type.Key.KeyProperties
+				.Select(p => type.Properties.Single(o => o.Name == p.Name))
+				.ToArray();
+		}
+
+		public static bool IsSoleKey(this Property property, EntityType parentType)
+		{
+			if (parentType.Key?.KeyProperties?.Length != 1) { return false; }
 			return parentType.Key.KeyProperties.Any(p => p.Name == property.Name);
 		}
 

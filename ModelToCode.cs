@@ -31,7 +31,8 @@ namespace EdmxToEfCore
 
 		public static T[] OrEmpty<T>(this T[] array) => array ?? Array.Empty<T>();
 
-		public static void ProcessFile(Configuration config, string inFile, Action<string> log, Action<string> warning, Action<string> onWriteFile)
+		public static void ProcessFile(Configuration config, string inFile,
+			Action<string> log, Action<string> warning, Action<string> onWriteFile)
 		{
 			Edmx edmx;
 			log($"Loading EDMX model at {inFile}...");
@@ -103,7 +104,8 @@ namespace EdmxToEfCore
 				type.UnderlyingType);
 		}
 
-		public static void WriteComplexType(this ComplexType type, Csdl.Schema schema, Configuration config, CSharpCodeWriter codeWriter)
+		public static void WriteComplexType(this ComplexType type,
+			Csdl.Schema schema, Configuration config, CSharpCodeWriter codeWriter)
 		{
 
 			codeWriter.Type(config.ComplexMetaType, type.Name, null, Modifiers.Partial);
@@ -115,7 +117,8 @@ namespace EdmxToEfCore
 			codeWriter.BlockEnd();
 		}
 
-		public static void WriteEntityContainer(this EntityContainer container, Csdl.Schema schema, Configuration config, CSharpCodeWriter codeWriter)
+		public static void WriteEntityContainer(this EntityContainer container,
+			Csdl.Schema schema, Configuration config, CSharpCodeWriter codeWriter)
 		{
 			config.LazyLoading = config.LazyLoading ?? container.LazyLoadingEnabled;
 			container.WriteClass(schema, codeWriter);
@@ -187,7 +190,10 @@ namespace EdmxToEfCore
 				writer.AutoProperty(set.Name, $"DbSet<{schema.FindTypeByName(set.EntityType).Name}>", null);
 				writer.NewLine();
 			}
-			writer.Method("OnModelCreating", null, Definition.Override, Modifiers.None, Visibility.Protected, ("ModelBuilder", "modelBuilder"));
+			writer.Method("OnModelCreating", null, Definition.Override,
+				Modifiers.None, Visibility.Protected, ("ModelBuilder", "modelBuilder"));
+
+			// Include entities not referenced directly
 			foreach (var type in schema.EntityTypes.OrEmpty()
 				.Where(t => !container.EntitySets.OrEmpty()
 					.Any(set => schema.FindTypeByName(set.EntityType) == t)
@@ -195,6 +201,20 @@ namespace EdmxToEfCore
 			) {
 				writer.Statement($"modelBuilder.Entity<{type.Name}>()");
 			}
+			writer.NewLine();
+
+			// Set up composite keys
+			foreach (var type in schema.EntityTypes.OrEmpty())
+			{
+				var keys = type.GetKeys();
+				if (keys.Length > 1)
+				{
+					var keyString = string.Join(", ", keys.Select(p => $"x.{p.Name}"));
+					writer.Statement(
+						$"modelBuilder.Entity<{type.Name}>().HasKey(x => new {{ {keyString} }})");
+				}
+			}
+
 			// TODO: OnDelete
 			// TODO: Default values?
 			writer.BlockEnd();
@@ -205,7 +225,7 @@ namespace EdmxToEfCore
 		public static void WriteOut(this Property prop, EntityType parent, Csdl.Schema schema, CSharpCodeWriter writer)
 		{
 			prop.WriteDocumentation(writer);
-			if (parent != null && prop.IsKey(parent))
+			if (parent != null && prop.IsSoleKey(parent))
 			{
 				writer.Attribute("Key");
 			}
@@ -227,7 +247,8 @@ namespace EdmxToEfCore
 				prop.GetterAccess, prop.SetterAccess);
 		}
 
-		public static void WriteClass(this EntityType type, Configuration config, Csdl.Schema schema, CSharpCodeWriter writer)
+		public static void WriteClass(this EntityType type, Configuration config,
+			Csdl.Schema schema, CSharpCodeWriter writer)
 		{
 			type.WriteDocumentation(writer);
 			var classMods = Modifiers.Partial;
@@ -242,7 +263,8 @@ namespace EdmxToEfCore
 			{
 				if (prop.StoreGeneratedPattern.HasValue)
 				{
-					writer.Attribute("DatabaseGenerated", $"DatabaseGeneratedOption.{prop.StoreGeneratedPattern.Value}");
+					writer.Attribute("DatabaseGenerated",
+						$"DatabaseGeneratedOption.{prop.StoreGeneratedPattern.Value}");
 				}
 				prop.WriteOut(type, schema, writer);
 				writer.NewLine();

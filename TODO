@@ -1,6 +1,7 @@
 ✔ Publish this to nuget! @done(18-09-08 20:14)
 ✔ Ensure that resultant built projects don't depend on our dependencies @done(18-09-09 13:14)
 ☐ Package the README within the nupkg - need to wait for https://github.com/NuGet/Home/wiki/Packaging-Icon%2C-License-and-Documentation-within-the-nupkg
+☐ Integration tests
 ✔ MSBuild Task: define, test and document @done(18-09-08 17:46)
 ✔ Fix it so you don't have to compile twice (output properties?) @done(18-09-08 17:43)
 ☐ Auto remove old/unused files according to pattern, esp for multi-file mode
@@ -9,7 +10,7 @@
 ✔ Support additional configuration (collection types, complex metatype etc.) @done(18-09-08 08:26)
 ✔ Fix nameof constructs to always use the namespace @done(18-09-08 08:26)
 ✔ Generate an OnCreateModel stub for the fluent API @done(18-09-08 16:19)
-☐ Use the fluent API for composite keys
+✔ Use the fluent API for composite keys @done(18-09-09 17:09)
 ☐ Automatically create join entities for many-to-many relationships
 ☐ Support OnDelete (using the fluent API)
 ☐ Add warnings/logging support (e.g. for FixedLength properties)
