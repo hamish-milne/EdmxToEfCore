@@ -10,7 +10,9 @@
     <RepositoryUrl>https://github.com/hamish-milne/EdmxToEfCore</RepositoryUrl>
     <PackageLicenseUrl>$(RepositoryUrl)/blob/master/LICENSE.TXT</PackageLicenseUrl>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+    <PackageIconUrl>$(RepositoryUrl)/blob/master/icon.png</PackageIconUrl>
     <Description>Generates Entity Framework Core models from EDMX files in the project.</Description>
+    <PackageReleaseNotes>See the README file in GitHub for more info and documentation ⇨ </PackageReleaseNotes>
     <Copyright>© Hamish Milne 2018</Copyright>
     <PackageTags>entity framework core; edmx</PackageTags>
     <MinClientVersion>2.5</MinClientVersion>
