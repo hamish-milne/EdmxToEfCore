@@ -215,8 +215,16 @@ namespace EdmxToEfCore
 		[XmlAttribute]
 		public string Name { get; set; }
 
-		[XmlAttribute(Namespace = Xmlns.Annotation)]
-		public StoreGeneratedPattern StoreGeneratedPattern { get; set; }
+		[XmlAttribute(nameof(StoreGeneratedPattern), Namespace = Xmlns.Annotation)]
+		public StoreGeneratedPattern RawStoreGeneratedPattern
+		{
+			get => StoreGeneratedPattern ?? default(StoreGeneratedPattern);
+			set => StoreGeneratedPattern = value;
+		}
+
+		[XmlIgnore] public StoreGeneratedPattern? StoreGeneratedPattern { get; set; }
+
+		public bool StoreGeneratedPatternSpecified => StoreGeneratedPattern.HasValue;
 
 		[XmlAttribute]
 		public ConcurrencyMode ConcurrencyMode { get; set; }

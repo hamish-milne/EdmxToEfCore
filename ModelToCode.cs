@@ -238,9 +238,12 @@ namespace EdmxToEfCore
 			writer.Type(MetaType.Class, type.Name,
 				type.BaseType == null ? null : new []{schema.FindTypeByName(type.BaseType).Name},
 				classMods, type.TypeAccess);
-			if (type.Properties != null)
-			foreach (var prop in type.Properties)
+			foreach (var prop in type.Properties.OrEmpty())
 			{
+				if (prop.StoreGeneratedPattern.HasValue)
+				{
+					writer.Attribute("DatabaseGenerated", $"DatabaseGeneratedOption.{prop.StoreGeneratedPattern.Value}");
+				}
 				prop.WriteOut(type, schema, writer);
 				writer.NewLine();
 			}

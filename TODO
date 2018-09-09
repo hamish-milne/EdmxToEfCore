@@ -7,10 +7,11 @@
 ✔ Support additional configuration (collection types, complex metatype etc.) @done(18-09-08 08:26)
 ✔ Fix nameof constructs to always use the namespace @done(18-09-08 08:26)
 ✔ Generate an OnCreateModel stub for the fluent API @done(18-09-08 16:19)
+☐ Use the fluent API for composite keys
 ☐ Automatically create join entities for many-to-many relationships
 ☐ Support OnDelete (using the fluent API)
 ☐ Add warnings/logging support (e.g. for FixedLength properties)
-☐ Figure out what to do with StoreGeneratedPattern
+✔ Figure out what to do with StoreGeneratedPattern @done(18-09-08 23:29)
 ☐ Default value support (property defaults, or fluent API?)
 ☐ Support owned types
 ✔ One file per class mode @done(18-09-08 10:37)
