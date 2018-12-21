@@ -194,7 +194,7 @@ namespace EdmxToEfCore
 		[XmlAttribute] public bool Nullable { get; set; } = true;
 		[XmlAttribute] public string DefaultValue { get; set; }
 		[XmlAttribute] public int MaxLength { get; set; }
-		[XmlAttribute] public int FixedLength { get; set; }
+		[XmlAttribute] public bool FixedLength { get; set; }
 		[XmlAttribute] public int Precision { get; set; }
 		[XmlAttribute] public int Scale { get; set; }
 		[XmlAttribute] public bool Unicode { get; set; }
